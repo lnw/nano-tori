@@ -1,0 +1,16 @@
+torus-simple
+torus-full
+torus-grid
+torus-extra
+
+botch_optimise-torus-full
+
+build/*.o
+output/*.xyz
+output/*.coord
+test
+debug
+final
+
+mybuild
+build
