@@ -7,7 +7,7 @@ This software is published under a very permissive license to make it as useful
 as possible for a variety of usecases.  If it is useful to you, especially in a
 scientific context, you are encouraged to cite XXX. 
 
-Some parts of geometry{2,3}.{hh,cc} and auxiliary.hh have been borrowed from
+Some parts of ```geometry{2,3}.{hh,cc}``` and ```auxiliary.hh``` have been borrowed from
 http://ctcp.massey.ac.nz/index.php?group=&page=fullerenes .
 
 
@@ -18,8 +18,9 @@ and related systems as well as macOS.
 
 ### using the ordinary Makefile
 
+```
 make
-
+```
 
 ### using CMake (probably more robust)
 
@@ -47,8 +48,8 @@ usage: ./torus-simple <m> <n> <l>
 ```
 
 The resulting tori will have hexagons with ideal angles, and the atom count
-will always be 4\*n.  If you chose an invalid 'l', you will be suggested valid
-choices for 'l'
+will always be 4\*n.  If you chose an invalid ```l```, you will be suggested valid
+choices for ```l```.
 
 ### torus-full
 
@@ -70,7 +71,7 @@ probably not sensible and other m,n,p,q should be chosen Tuning the phase is
 mostly useful to get the maximal point group symmetry.  Note that the bond
 length is only a target and there will always be a spectrum of shorter and
 longer bonds (especially for large r and small R).  The elliptic parameter can
-be left at 0.0 for very large R, but should be increased to 1.1 ... 1.5 for
+be left at 1.0 for very large R, but should be increased to 1.1 ... 1.5 for
 smaller R or large r.
 
 ### torus-extra
