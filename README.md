@@ -38,7 +38,9 @@ with no or the wrong number of parameters.
 
 ### torus-simple
 
-Generate a subset of the possible tori which has undistorted hexagons.
+Generate the subset of possible tori which has undistorted hexagons, ie, where
+the angle between (m,n) and (p,q) is 90 degrees and where we can therefore omit
+p and q and provide only the length of the vector.
 
 ```
 usage: ./torus-simple <m> <n> <l>
@@ -53,7 +55,8 @@ choices for ```l```.
 
 ### torus-full
 
-Generate any circular torus, and choose the ellipticity of the cross section.
+Generate any circular torus with arbitrary angles between (m,n) and (p,q), and
+choose the ellipticity of the cross section.
 
 ```
 usage: ./torus-full <m> <n> <p> <q> <phase> <bl> <ell>
@@ -61,13 +64,13 @@ usage: ./torus-full <m> <n> <p> <q> <phase> <bl> <ell>
   <n>: second component of the chiral vector
   <p>: first component of the second side
   <q>: second component of the second side
-  <phase>: where is the first atom [in rad], eg `0'?
+  <phase>: where is the first atom [in rad], eg '0'?
   <target bond length>: 1.43, maybe?
-  <elliptic parameter>: choose `1' for none
+  <elliptic parameter>: choose '1' for none
 ```
 
 If the printed shear matrix if far from {{1,0},{0,1}} the obtained structure is
-probably not sensible and other m,n,p,q should be chosen Tuning the phase is
+probably not sensible and other m,n,p,q should be chosen.  Tuning the phase is
 mostly useful to get the maximal point group symmetry.  Note that the bond
 length is only a target and there will always be a spectrum of shorter and
 longer bonds (especially for large r and small R).  The elliptic parameter can
@@ -112,7 +115,7 @@ there are no bonds.)
 ### botch_optimise-torus-full
 
 If one is not sure about the best target bond length or the best elliptical
-parameter but needs structures that are optimised at soe expensive qc-level of
+parameter but needs structures that are optimised at some expensive qc-level of
 theory, it can be efficient to preoptimise the structure in this two-parameter space.
 
 The current version strictly aims at turbomole, but it should be possible to

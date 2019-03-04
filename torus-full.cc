@@ -120,9 +120,9 @@ int main(int ac, char **av) {
     cout << "  <n>: second component of the chiral vector" << endl;
     cout << "  <p>: first component of the second side" << endl;
     cout << "  <q>: second component of the second side" << endl;
-    cout << "  <phase>: where is the first atom [in rad], eg `0'?" << endl;
+    cout << "  <phase>: where is the first atom [in rad], eg '0'?" << endl;
     cout << "  <target bond length>: 1.43, maybe?" << endl;
-    cout << "  <elliptic parameter>: choose `1' for none" << endl;
+    cout << "  <elliptic parameter>: choose '1' for none" << endl;
     abort();
   }
   int m = stol(av[1], 0, 0);
