@@ -5,7 +5,13 @@
 
 This software is published under a very permissive license to make it as useful
 as possible for a variety of usecases.  If it is useful to you, especially in a
-scientific context, you are encouraged to cite XXX. 
+scientific context, you are encouraged to cite:
+
+Magnetically Induced Current Densities in Toroidal Carbon Nanotubes,
+Kevin Reiter, Florian Weigend, Lukas Nico Wirz, Maria Dimitrova, and Dage Sundholm,
+The Journal of Physical Chemistry C,
+DOI: 10.1021/acs.jpcc.9b03769
+
 
 Some parts of ```geometry{2,3}.{hh,cc}``` and ```auxiliary.hh``` have been borrowed from
 http://ctcp.massey.ac.nz/index.php?group=&page=fullerenes .
