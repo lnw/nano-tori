@@ -13,6 +13,7 @@
 #include "auxiliary.hh"
 #include "geometry2.hh"
 #include "geometry3.hh"
+#include "shape-gen.hh"
 
 using namespace std;
 
@@ -25,83 +26,13 @@ using namespace std;
 // -- use space curve, modulated with the density function
 
 
-coord3d circle(const double t){
-  const double x = cos(t);
-  const double y = sin(t);
-  const double z = 0;
-  return coord3d(x,y,z);
-}
-coord3d circle_tangent(const double t){
-  const double x = -sin(t);
-  const double y = cos(t);
-  const double z = 0;
-  return coord3d(x,y,z).normalised();
-}
-
-coord3d trefoil(const double t){
-  const double x = sin(t) + 2*sin(2*t);
-  const double y = cos(t) - 2*cos(2*t);
-  const double z = -sin(3*t);
-  return coord3d(x,y,z);
-}
-coord3d trefoil_tangent(const double t){
-  const double x = cos(t) + 4*cos(2*t);
-  const double y = -sin(t) + 4*sin(2*t);
-  const double z = -3*cos(3*t);
-  return coord3d(x,y,z).normalised();
-}
-
-coord3d lemniscate(const double t){
-  const double a = 2.0;
-  const double b = 0.3;
-  const double x = a*cos(t)/(1+sin(t)*sin(t));
-  const double y = a*sin(t)*cos(t)/(1+sin(t)*sin(t));
-  const double z = b * sin(t);
-  return coord3d(x,y,z);
-}
-coord3d lemniscate_tangent(const double t){
-  const double a = 2.0;
-  const double b = 0.3;
-  const double x = -(2*a*(5+cos(2*t))*sin(t))/pow(-3+cos(2*t),2);
-  const double y = (2*a*(-1+3*cos(2*t)))/pow(-3+cos(2*t),2);
-  const double z = b * cos(t);
-  return coord3d(x,y,z);
-}
-
-coord3d curve(int c, const double t)
-{ 
-  switch(c){
-  case 1: return circle(t);
-  case 2: return trefoil(t);
-  case 3: return lemniscate(t);
-  default:
-    break;
-  }
-  cerr << "invalid curve chosen, aborting ..." << endl;
-  abort();
-}
-
-coord3d curve_tan(int c, const double t)
-{ 
-  switch(c){
-  case 1: return circle_tangent(t);
-  case 2: return trefoil_tangent(t);
-  case 3: return lemniscate_tangent(t);
-  default:
-    break;
-  }
-  cerr << "invalid curve chosen, aborting ..." << endl;
-  abort();
-}
-
-
 
 int main(int ac, char **av) {
 
 // cerr << ac << endl;
   if (ac != 7) {
     cout << "like torus-full, without ellipticity, but producing silly knots" << endl;
-    cout << "usage: " << av[0] << " <m> <n> <p> <q> <bl> <structure>" << endl;
+    cout << "usage: " << av[0] << " <m> <n> <p> <q>" << endl;
     cout << "  <m>: first component of the chiral vector" << endl;
     cout << "  <n>: second component of the chiral vector" << endl;
     cout << "  <p>: first component of the second side" << endl;
@@ -130,6 +61,10 @@ int main(int ac, char **av) {
   cout << "m, n, p, q: " << m << ", " << n << ", " << p << ", " << q << endl;
   cout << "target bond length: " << CC_bondlength << endl;
   cout << "chosen curve: " << n_curve << endl;
+
+  ShapeGenerator shape_gen;
+  auto shape = shape_gen.get_shape(n_curve);
+  auto shape_tan = shape_gen.get_shape_tan(n_curve);
 
   const double eps = 1.e-8;
 
@@ -211,101 +146,52 @@ int main(int ac, char **av) {
   S2.crop(0-eps, 0-eps, 2*M_PI*r-eps, 2*M_PI*R-eps);
 // cout << "crop2 " << S2.size() << endl;
 
-//  const double integral_over_2pi = 1; //approximate_that_bloody_integral(r, dr, 2*M_PI);
-//  const double integral_over_2pi_normalised = integral_over_2pi / (2*M_PI);
-  // cout << integral_over_2pi << endl;
-  // cout << integral_over_2pi_normalised << endl;
+
+  const int n_steps(1000);
+  double length_tot;
+  const vector<double> dists_inv_acc = shape_gen.get_inverse_mapping(n_curve, n_steps, length_tot);
+  // cout << dists_inv_acc << endl;
+
+  const double factor = 2* M_PI * R / length_tot;
+  // cout << "fac: " << factor << endl;
+
 
   structure3d S3;
 
-  const int n_points(10000);
-  for (int i = 0; i<n_points; i++){
-    const double ii = 2*M_PI*i / n_points;
-    const coord3d c3d = curve(n_curve, ii);
-    S3.push_back(c3d);
-    S3.push_back_atom(string("C"));
-  }
-
-
-
-
-  // distances
-  vector<double> dists;
-  for(size_t i = 0; i< S3.size(); i++){
-    coord3d previous = S3[(i+S3.size()-1)%S3.size()];
-    coord3d here = S3[i];
-    coord3d next = S3[(i+1)%S3.size()];
-    double dist = ((here-next).norm() + (here-previous).norm())/2;
-    //cout << (here-next).norm() << ", " <<  (here-previous).norm() << ", " << ((here-next).norm() + (here-previous).norm())/2 << endl;
-    dists.push_back(dist);
-  }
-  //cout << "dists : " << dists << endl;
-  // distances inverse, total length
-  double length_tot = 0;
-  for(const double dist: dists){
-    length_tot += dist;
-  }
-  cout << "tot: " << length_tot << endl;
-  double dist_avg = length_tot / n_points;
-  cout << "avg: " << dist_avg << endl;
-  // distances inverse, total length
-  vector<double> dists_inv;
-  for(const double dist: dists){
-    double dist_inv = 2*dist_avg - dist; // a - (x - a)
-    dists_inv.push_back(dist_inv);
-  }
-  //cout << "dists inv: " << dists_inv << endl;
-  // accumulated inverse distances
-  vector<double> dists_inv_acc;
-  double tmp=0;
-  const double fac = 2*M_PI/length_tot;
-  for(const double dist_inv: dists_inv){
-    tmp += dist_inv*fac;
-    dists_inv_acc.push_back(tmp);
-  }
-  //cout << "dists inv acc: " << dists_inv_acc << endl;
-
-
-  const double factor = 2* M_PI * R / length_tot;
-
-
-  structure3d S4;
-
-  for(size_t i=0; i<S2.size(); i++){
+  for(int i=0; i<S2.size(); i++){
     const double phi  ( (S2[i][0])/r );
     const double theta( (S2[i][1])/R );
     // cout << "phi, theta: " << theta << ", " << phi << endl;
     // modulate phi such that in a torus with ellipsoidal cross section the atoms are less dense at top/bottom and less sparse on the sides
     double theta_prime;
-    if (theta*n_points/(2*M_PI) - floor( theta*n_points/(2*M_PI) ) < 1.e-3){
-      int index = int(theta*n_points/(2*M_PI) + 0.5);
+    if ( abs(theta*n_steps/(2*M_PI) - round( theta*n_steps/(2*M_PI) )) < 1.e-3){
+      const int index = int(theta*n_steps/(2*M_PI) + 0.5);
       theta_prime = dists_inv_acc[index];
     }
     else {
-      int index1 = int(theta*n_points/(2*M_PI) + 0.5);
-      double weight1 = theta*n_points/(2*M_PI) - index1;
-      int index2 = int(theta*n_points/(2*M_PI) + 1.5);
-      double weight2 = index2 - theta*n_points/(2*M_PI);
+      const int index1 = int(theta*n_steps/(2*M_PI));
+      const double weight2 = theta*n_steps/(2*M_PI) - index1;
+      const int index2 = index1 + 1;
+      const double weight1 = index2 - theta*n_steps/(2*M_PI);
       // cout << index1 << ", " << index2 << endl;
       // cout << weight1 << ", " << weight2 << endl;
       theta_prime = weight1 * dists_inv_acc[index1] + weight2 * dists_inv_acc[index2];
     }
 
-    coord3d nn(curve(n_curve, theta_prime) * factor);
-    coord3d tangent(curve_tan(n_curve, theta_prime));
+    coord3d nn(shape(theta_prime) * factor);
+    coord3d tangent(shape_tan(theta_prime));
     coord3d ref(0,0,1);
     coord3d va( (tangent.cross(ref)).normalised() );
     coord3d vb( (tangent.cross(va)).normalised() );
     coord3d c3d( nn + va*r*cos(phi) + vb*r*sin(phi) );
     // cout << c3d << endl;
-    S4.push_back(c3d);
-    S4.push_back_atom(string("C"));
+    S3.push_back(c3d);
+    S3.push_back_atom(string("C"));
   }
 
 
-  // S4.atomtypes[0] = "O";
-  S4.scale(CC_bondlength);
-  if (invert) S4.invert();
+  S3.scale(CC_bondlength);
+  if (invert) S3.invert();
 // cout << "S: " << S << endl;
 
 
@@ -316,8 +202,8 @@ int main(int ac, char **av) {
                            + to_string_with_precision(CC_bondlength) + "-" + to_string(atom_count));
   ofstream xyz((basename + ".xyz").c_str());
   ofstream turbo((basename + ".coord").c_str());
-  xyz << S4.to_xyz();
-  turbo << S4.to_turbomole();
+  xyz << S3.to_xyz();
+  turbo << S3.to_turbomole();
   xyz.close();
   turbo.close();
 

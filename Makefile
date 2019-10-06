@@ -11,7 +11,7 @@ CXX=g++
 GSL_INCLUDES_L=-lgsl -lgslcblas
 FLAGS=-O2 -std=c++14 -Wunused -Wshadow -g # -Wall
 
-HEADERS=geometry2.hh geometry3.hh auxiliary.hh rational.hh
+HEADERS=geometry2.hh geometry3.hh auxiliary.hh rational.hh shape-gen.hh
 OBJECTS=geometry2.o geometry3.o
 OBJECTS_P=$(patsubst %.o, build/%.o, $(OBJECTS))
 

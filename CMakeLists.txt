@@ -5,9 +5,9 @@
 # See file LICENSE in this project.
 
 cmake_minimum_required(VERSION 3.2.0)
-project(moebius-gen)
+project(nano-tori-gen)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
 set(libs)
