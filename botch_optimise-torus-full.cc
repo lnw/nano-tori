@@ -42,7 +42,7 @@ vector<double> read_energy(const string& filename)
     try {
       double e(stod(l, 0));
       energies.push_back(e);
-    } catch (invalid_argument){
+    } catch (invalid_argument&){
     }
   }
   cout << "read energies: " << energies << endl;

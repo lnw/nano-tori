@@ -10,9 +10,13 @@ project(nano-tori-gen)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-set(libs)
+set(CMAKE_VERBOSE_MAKEFILE FALSE)
 
-include_directories(AFTER SYSTEM .)
+set(CMAKE_CXX_FLAGS "")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -Wall -Wshadow -Wpedantic")
+
+set(libs)
 
 find_package(GSL)
 if(GSL_FOUND)

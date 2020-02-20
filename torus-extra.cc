@@ -158,7 +158,7 @@ int main(int ac, char **av) {
 
   structure3d S3;
 
-  for(int i=0; i<S2.size(); i++){
+  for(size_t i=0; i<S2.size(); i++){
     const double phi  ( (S2[i][0])/r );
     const double theta( (S2[i][1])/R );
     // cout << "phi, theta: " << theta << ", " << phi << endl;
